@@ -155,7 +155,7 @@ def configure_environment(args, logger=None):
     shutil.copyfile(args.input, args.output)
 
     log('info', f"Opening {args.input} in radare2.")
-    r2 = r2pipe.open(args.output, ['-w'])
+    r2 = r2pipe.open(args.output, ['-w', '-2'])
 
     if args.debug:
         log('debug', "Analyzing architecture of the executable.")

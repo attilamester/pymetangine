@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+
+  pymetangine:
+    image: attilamester/pymetangine
+    build:
+      context: ..
+      network: host
+      dockerfile: ./build/Dockerfile
+    network_mode: "host"
+    volumes:
+      - ./input:/input
+      - ./output:/output
