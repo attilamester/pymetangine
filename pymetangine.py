@@ -129,6 +129,10 @@ def main(args, r2, meta, logger=None):
                     log('error',
                         f"Function {fun['name']} could not be disassembled")
                 else:
+                    if not fun_code or 'ops' not in fun_code:
+                        log('error', f"Function {fun['name']} has no instructions.")
+                        continue
+
                     mutation = mutate_function(args, meta, fun_code)
                     if mutation is not None and mutation:
                         mutations.append(mutation)
