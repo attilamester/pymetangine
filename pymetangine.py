@@ -63,41 +63,33 @@ def mutate_function(args, meta, func):
                 if args.random == 'n' and not mutation:
                     continue
 
+                mutated_instr = mutation if mutation else ins_analyzed['opcode']
+                mutated_bytes = meta.gen_bytes(mutated_instr)
+
                 if ins_analyzed['size'] == size:
                     if args.debug:
-                        mt = mutation if mutation else ins_analyzed['opcode']
                         log('debug' if mutation else 'debugw',
                             f"Mutating instruction "
                             f"({ins_analyzed['offset']:#x}): "
-                            f"{ins_analyzed['opcode']:20s} -->    {mt:30s}")
+                            f"{ins_analyzed['opcode']:20s}"
+                            f"{ins_analyzed['bytes']:>20s}"
+                            f" --> "
+                            f"{mutated_bytes:20s}"
+                            f"{mutated_instr:30s}")
                     if mutation:
                         list_mutations.append(
                             {'offset': ins_analyzed['offset'],
-                             'bytes': meta.gen_bytes(mutation)})
+                             'bytes': mutated_bytes})
                 else:
-                    ins_to_skip = size-ins_analyzed['size']
-                    if ins_analyzed['type'] == 'upush':
-                        orig_ins = (f"{func['ops'][ins_idx]['opcode']}; "
-                                    f"{func['ops'][ins_idx + 1]['opcode']}")
-                    else:
-                        orig_ins = f"nop{'; nop'*ins_to_skip}"
-
-                    same_ins = mutation == '' or mutation == orig_ins
-                    if args.random == 'n' and same_ins:
-                        continue
-
-                    ins_idx += ins_to_skip
-
                     if args.debug:
-                        mt = mutation if not same_ins else orig_ins
-                        log('debug' if not same_ins else 'debugw',
-                            f"Mutating instruction "
+                        log('debug' if mutation else 'debugw',
+                            f"Skipping Mutation due to size mismatch"
                             f"({ins_analyzed['offset']:#x}): "
-                            f"{orig_ins:20s} -->    {mt:30s}")
-                    if not same_ins:
-                        list_mutations.append(
-                            {'offset': ins_analyzed['offset'],
-                             'bytes': meta.gen_bytes(mutation)})
+                            f"{ins_analyzed['opcode']:20s}"
+                            f"{ins_analyzed['bytes']:>20s}"
+                            f" --> "
+                            f"{mutated_bytes:20s}"
+                            f"{mutated_instr:30s}")
                 meta.ins_inc()
             break
         ins_idx += 1
