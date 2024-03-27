@@ -119,7 +119,11 @@ def patch_executable(args, r2, meta, mutations, logger=None):
 def main(args, r2, meta, logger=None):
     if args.debug:
         log('debug', "Loading functions information.")
-    functions = r2.cmdj('aflj')
+
+    try:
+        functions = r2.cmdj('aflj')
+    except:
+        functions = None
 
     if functions is not None:
         if args.debug:
